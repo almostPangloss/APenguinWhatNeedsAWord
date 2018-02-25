@@ -11,6 +11,10 @@ public class Fretting implements Map<Wire, Integer> {
     public Fretting(final Map<Wire, Integer> fretting) {
         this.fretting = new HashMap<>(fretting);
     }
+    
+    public Fretting() {
+        this(new HashMap<>());
+    }
 
     @Override
     public void clear() {

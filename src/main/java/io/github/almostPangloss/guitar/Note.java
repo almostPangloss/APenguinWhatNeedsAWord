@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-public class Note {
+public class Note implements Comparable<Note> {
     private static final DecimalFormat FREQUENCY_FORMAT = new DecimalFormat(".##hz");
     private static List<String> NAMES = ImmutableList.of("E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#");
     private static final double SEMITONE_FACTOR = 1.0595;
@@ -48,5 +48,10 @@ public class Note {
     @Override
     public String toString() {
         return "(" + name + " - " + FREQUENCY_FORMAT.format(frequency) + ")";
+    }
+
+    @Override
+    public int compareTo(Note other) {
+        return Double.compare(frequency, other.frequency);
     }
 }
