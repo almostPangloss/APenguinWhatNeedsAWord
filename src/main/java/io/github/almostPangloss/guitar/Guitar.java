@@ -46,12 +46,36 @@ public class Guitar {
         
         Set<Fretting> frettings = new HashSet<>();
         
-        // TODO: stuff
+        /*
+         * OK, it looks, through debugging, like generating the elements of the chord isn't working, exactly. 
+         * Or it is, but in a useless way.
+         * It finds freq's that are mostly meaningless for the second and third elements, which then means the 
+         * fret found is also mostly useless.
+         * But I've been reading over this code for probably two hours, now, so I could easily be confused.
+         * 
+         * For the fretting, all we care about is finding the first/lowest note, and after that, each string
+         * needs to be used only once and must be fretted such that it generates one of the three note names 
+         * in the chord.
+         * 
+         * Why, though, does noteFretByString have three elements - the three notes of a chord - with each, 
+         * then, having a place for every string? 
+         * 
+         * Using (E, 82.41) it doesn't properly pick up the B in the chord, even though it should be able to.
+         * 
+         * Using A, 110 is giving the Amin chord...? It's finding the wrong Third: [(A - 110.0hz), **(C - 130.83hz),** (E - 164.85hz)]
+         */
         
         return frettings;
     }
 
     public Wire getString(final int index) {
         return strings.get(index);
+    }
+    
+    public static void main (String[] args) {
+        Note note = new Note("A", 110.0);
+        Chord chord = new Chord(note.getName());
+        Guitar guitar = new Guitar();
+        guitar.getFrettings(chord.major(note));
     }
 }
