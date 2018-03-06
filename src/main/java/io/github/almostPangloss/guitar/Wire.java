@@ -6,7 +6,7 @@ import java.util.List;
 public class Wire {
     private static final int DEFAULT_FRETS = 15;
     private final Note base;
-    private final int frets;
+    public final int frets;
 
     public Wire(final Note base) {
         this(base, DEFAULT_FRETS);
