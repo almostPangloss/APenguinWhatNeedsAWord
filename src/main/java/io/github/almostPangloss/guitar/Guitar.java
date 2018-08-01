@@ -12,7 +12,8 @@ import com.google.common.collect.ImmutableList;
 
 public class Guitar {
     private static final List<Note> DEFAULT_BASE_NOTES =
-        ImmutableList.of(new Note("E", 82.41), new Note("A", 110.0), new Note("D", 146.83), new Note("G", 196.0), new Note("B", 246.94), new Note("E", 329.63));
+        ImmutableList.of(new Note("E", 82.41), new Note("A", 110.0), new Note("D", 146.83), 
+        				new Note("G", 196.0), new Note("B", 246.94), new Note("E", 329.63));
     private static final int MAX_FRETTING_SPAN = 3;
     private List<Wire> strings;
 
@@ -31,7 +32,7 @@ public class Guitar {
 
     public Set<Fretting> getFrettings(final Chord chord) {
         List<Note> notes = new ArrayList<>(chord);
-        notes.sort(Note::compareTo);
+        //notes.sort(Note::compareTo);
         
         /*
          *  
@@ -40,62 +41,15 @@ public class Guitar {
          */
         
         // This gets each location of those exact frequencies found in the passed-in Chord.
-        Map<Note, Map<Wire, Integer>> noteByFretOnEachString = new HashMap<Note, Map<Wire, Integer>>(notes.size());
-        for (int i = 0; i < notes.size(); i++ ) {
-            Note note = notes.get(i);
-            double noteFrequency = note.getFrequency();
-            
-            for ( Wire wire : strings) {
-                for (int f = 0; f < wire.frets; f++) {
-                    //Testing for equivalence between Doubles with an AbsVal of Subtraction
-                    if ( Math.abs(noteFrequency - wire.getNote(f).getFrequency()) < .1  ) { 
-                        Map<Wire, Integer> stringAndFret = new HashMap<>();
-                        stringAndFret.put(wire, f);
-                        System.out.println("\nWire: " + strings.indexOf(wire) + "\nFret: " + f);
-                        noteByFretOnEachString.put(note, stringAndFret);
-                    }
-                }
-            }
-        }
+        Map<Note, Map<Wire, Integer>> chordElementLocations = noteByFretOnEachString(chord);
+        
+        
+        // RESOLVED: Almost working. In Console it seems to be, but in Debug it looks like keys are possibly getting overwritten?
+        // Maybe include getting the frettings going in here? an if/then grabbing the first stringAndFret combo with a Fret value below 4, then build from there?
         
         // This gets each location of the note names found in the passed-in Chord.
+        Map<String, Map<Wire, Integer>> chordNoteNameLocations = allNoteAppearances(chord);
         
-        //Almost working. In Console it seems to be, but in Debug it looks like keys are possibly getting overwritten?
-        
-        Map<Note, Map<Wire, Integer>> allNoteAppearances = new HashMap<Note, Map<Wire, Integer>>(notes.size());
-        for (int i = 0; i < notes.size(); i++ ) {
-            Note note = notes.get(i);
-            String noteName = note.getName();
-            
-            System.out.println("*********All Instances of " + noteName + " **********");
-            for ( Wire wire : strings) {
-                for (int f = 0; f < wire.frets; f++) {
-                    //Testing for equivalence between Doubles with an AbsVal of Subtraction
-                    if ( noteName == wire.getNote(f).getName() ) { 
-                        Map<Wire, Integer> stringAndFret = new HashMap<>();
-                        stringAndFret.put(wire, f);
-                        System.out.println("\nWire: " + strings.indexOf(wire) + "\nFret: " + f);
-                        allNoteAppearances.put(note, stringAndFret);
-                    }
-                }
-            }
-        }
-        
-        
-//        /*
-//        List<List<Integer>> noteFretByString = new ArrayList<>(notes.size());
-//        for(int i = 0; i < notes.size(); i++) {
-//            noteFretByString.add(new ArrayList<>(strings.size()));
-//        }
-//        
-//        for(int n = 0; n < notes.size(); n++) {
-//            Note note = notes.get(n);
-//            for(Wire string : strings) {
-//                int fret = string.getFret(note);
-//                noteFretByString.get(n).add(fret);
-//            }
-//        }
-//        */
         
         Set<Fretting> frettings = new HashSet<>();
         
@@ -106,6 +60,30 @@ public class Guitar {
          * move up a string and continue
          * 
          */
+        
+        Fretting fretting = new Fretting();
+        
+        // chord.getName() will give the note name of the lowest note, then just find that
+        System.out.println("\n\nHopefully the set of keys?");
+        System.out.println(chordNoteNameLocations.keySet().toString());
+        
+        // Hopefully this will loop through the list of note names starting from E looking to see 
+        // if the current note name is in the key set of the chord. When it is, that's the name of the chord.
+        String firstNoteOfFretting = "";
+        int index = 0;
+        
+        while (firstNoteOfFretting == "") {
+        	if (chordNoteNameLocations.keySet().contains(Note.NAMES.get(index))) {
+        		firstNoteOfFretting = Note.NAMES.get(index);
+        	}
+        	index++;
+        }
+        
+        System.out.println("First note of fretting: " + firstNoteOfFretting);
+        
+        System.out.println("Chord name: " + chord.getName());
+        
+        // fretting.put(key, value)
         
         /*
          * OK, it looks, through debugging, like generating the elements of the chord isn't working, exactly. 
@@ -120,23 +98,69 @@ public class Guitar {
          * 
          * Why, though, does noteFretByString have three elements - the three notes of a chord - with each, 
          * then, having a place for every string? 
-         * 
-         * Using (E, 82.41) it doesn't properly pick up the B in the chord, even though it should be able to.
-         * 
-         * Using A, 110 is giving the Amin chord...? It's finding the wrong Third: [(A - 110.0hz), **(C - 130.83hz)**, (E - 164.85hz)]
          */
         
         return frettings;
     }
+    
+    public Map<Note, Map<Wire, Integer>> noteByFretOnEachString (Chord chord) {
+    	
+        List<Note> notes = new ArrayList<>(chord);
+        notes.sort(Note::compareTo);
+        
+        // This gets each location of those exact frequencies found in the passed-in Chord.
+        Map<Note, Map<Wire, Integer>> noteByFretOnEachString = new HashMap<Note, Map<Wire, Integer>>(notes.size());
+        for (int i = 0; i < notes.size(); i++ ) {
+            Note note = notes.get(i);
+            double noteFrequency = note.getFrequency();
+            
+            for ( Wire wire : strings) {
+                for (int f = 0; f < wire.frets; f++) {
+                    //Testing for equivalence between Doubles with an AbsVal of Subtraction
+                	Map<Wire, Integer> stringAndFret = new HashMap<>();
+                    if ( Math.abs(noteFrequency - wire.getNote(f).getFrequency()) < .1  ) { 
+                        stringAndFret.put(wire, f);
+                        System.out.println("\nWire: " + strings.indexOf(wire) + "\nFret: " + f);
+                        noteByFretOnEachString.put(note, stringAndFret);
+                    }
+                }
+            }
+        }
+        
+		return noteByFretOnEachString;
+    }
+    
+    public Map<String, Map<Wire, Integer>> allNoteAppearances (Chord chord) {
+    	
+        List<String> notes = new ArrayList<>();
+        for (Note note : chord) {
+        	notes.add(note.getName());
+        }
+        
+    	Map<String, Map<Wire, Integer>> allNoteAppearances = new HashMap<String, Map<Wire, Integer>>(notes.size());
+    	for (int i = 0; i < notes.size(); i++ ) {
+    		String note = notes.get(i);
+    		
+    		System.out.println("\n\n*********All Instances of " + note + " **********");
+    		for ( Wire wire : strings) {
+    			for (int f = 0; f < wire.frets; f++) {    	
+    				Map<Wire, Integer> stringAndFret = new HashMap<>();
+    				//Testing for equivalence between Doubles with an AbsVal of Subtraction
+    				if ( note == wire.getNote(f).getName() ) { 
+    					stringAndFret.put(wire, f);
+    					System.out.println("\nWire: " + strings.indexOf(wire) + "\nFret: " + f);
+    					allNoteAppearances.put(note, stringAndFret);
+    				}
+    			}
+    		}
+    	}
+    	
+		return allNoteAppearances;
+    }
+
 
     public Wire getString(final int index) {
         return strings.get(index);
     }
     
-    public static void main (String[] args) {
-        Note note = new Note("A", 110.0);
-        Chord chord = new Chord(note.getName());
-        Guitar guitar = new Guitar();
-        System.out.print(guitar.getFrettings(chord.major(note)).toString());
-    }
 }

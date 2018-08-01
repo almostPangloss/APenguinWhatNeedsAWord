@@ -28,19 +28,23 @@ public class Scale {
 
     private List<Note> generateNotes() {
         final List<Note> notes = new ArrayList<>(SCALE_SIZE);
-        notes.add(base);
 
         final Set<Integer> halfSteps = minor ? MINOR_HALF_STEPS : MAJOR_HALF_STEPS;
 
         Note note = base;
-        for(int i = 1; i < SCALE_SIZE; i++) {
+        for(int i = 0; i < SCALE_SIZE; i++) {
+        	System.out.println("Note, being added to notes, is: " + note);
+            notes.add(note);
+        	
             if(halfSteps.contains(i)) {
+            	System.out.println("Note, before moving it up one, is: " + note);
                 note = note.higherSemitone(1);
             } else {
+            	System.out.println("Note, before moving it up two, is: " + note);
                 note = note.higherSemitone(2);
             }
+            
 
-            notes.add(note);
         }
 
         return notes;

@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 public class Note implements Comparable<Note> {
     private static final DecimalFormat FREQUENCY_FORMAT = new DecimalFormat(".##hz");
-    private static List<String> NAMES = ImmutableList.of("E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#");
+    public static List<String> NAMES = ImmutableList.of("E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#");
     private static final double SEMITONE_FACTOR = 1.0595;
     public static int SEMITONES_PER_OCTAVE = NAMES.size();
     private final double frequency;
@@ -37,7 +37,7 @@ public class Note implements Comparable<Note> {
         final int nameIndex = (NAMES.indexOf(name) + number) % NAMES.size();
         return new Note(NAMES.get(nameIndex), frequency);
     }
-
+    
     public Note lowerSemitone(final int number) {
         final double inverseFactor = 1 / SEMITONE_FACTOR;
         final double frequency = this.frequency * Math.pow(inverseFactor, number);

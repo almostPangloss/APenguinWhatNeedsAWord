@@ -27,7 +27,10 @@ public class Chord implements Set<Note> {
         final List<Note> notes = scale.getNotes();
         for(final Integer note : TRIAD_NOTES) {
             chord.add(notes.get(note));
+            System.out.println("The note being added to positionis: " + notes.get(note).toString());
+
         }
+        System.out.println("The chord being returned is: " + chord.toString());
 
         return chord;
     }
@@ -62,6 +65,11 @@ public class Chord implements Set<Note> {
     public Chord(final String name, final Collection<Note> notes) {
         this.name = name;
         this.notes = new HashSet<>(notes);
+    }
+
+    @Override
+    public String toString() {
+    	return name + " -- " + String.join(", ", notes.stream().map(Note::toString).collect(Collectors.toList()));
     }
 
     @Override
@@ -140,8 +148,4 @@ public class Chord implements Set<Note> {
         return this.notes.toArray(notes);
     }
 
-    @Override
-    public String toString() {
-        return name + " -- " + String.join(", ", notes.stream().map(Note::toString).collect(Collectors.toList()));
-    }
 }
