@@ -67,21 +67,25 @@ public class Guitar {
         System.out.println("\n\nHopefully the set of keys?");
         System.out.println(chordNoteNameLocations.keySet().toString());
         
-        // Hopefully this will loop through the list of note names starting from E looking to see 
-        // if the current note name is in the key set of the chord. When it is, that's the name of the chord.
-        String firstNoteOfFretting = "";
-        int index = 0;
-        
-        while (firstNoteOfFretting == "") {
-        	if (chordNoteNameLocations.keySet().contains(Note.NAMES.get(index))) {
-        		firstNoteOfFretting = Note.NAMES.get(index);
-        	}
-        	index++;
-        }
-        
-        System.out.println("First note of fretting: " + firstNoteOfFretting);
-        
-        System.out.println("Chord name: " + chord.getName());
+			        // Hopefully this will loop through the list of note names starting from E looking to see 
+			        // if the current note name is in the key set of the chord. When it is, that's the name of the chord.
+			        String firstNoteOfFretting = "";
+			        int index = 0;
+			        
+			        while (firstNoteOfFretting == "") {
+			        	if (chordNoteNameLocations.keySet().contains(Note.NAMES.get(index))) {
+			        		firstNoteOfFretting = Note.NAMES.get(index);
+			        	}
+			        	index++;
+			        }
+			        
+			        System.out.println("First note of fretting: " + firstNoteOfFretting);
+			        
+			        System.out.println("Chord name: " + chord.getName());
+			        
+			        // OK, glad I included the chord.getname(), because the whole loop before that doesn't do what I had anticipated. 
+			        // What's the trouble with my thought, there? Why does it not do the thing I expect/want? I mean, I see why, actually.
+			        // The question is why I thought it would before I tested it?
         
         // fretting.put(key, value)
         
