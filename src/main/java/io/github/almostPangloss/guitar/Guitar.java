@@ -102,6 +102,7 @@ public class Guitar {
 		int lowerBound = 0;
 		int upperBound = 3;
 		
+		// Ew gross
 		Set<Set<Map<Wire, Integer>>> frettings = new HashSet<>();
 		Collection<Map<Wire, Integer>> noteNameCollection = chordNoteNameLocations.values();
 		
