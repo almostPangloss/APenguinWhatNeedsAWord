@@ -1,6 +1,7 @@
 package io.github.almostPangloss.guitar;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ public class Guitar {
         strings = Collections.unmodifiableList(strings);
     }
 
-    public Set<Fretting> getFrettings(final Chord chord) {
+    public Set<Set<Map<Wire, Integer>>> getFrettings(final Chord chord) {
         List<Note> notes = new ArrayList<>(chord);
         //notes.sort(Note::compareTo);
         
@@ -51,7 +52,7 @@ public class Guitar {
         Map<String, Map<Wire, Integer>> chordNoteNameLocations = allNoteAppearances(chord);
         
         
-        Set<Fretting> frettings = new HashSet<>();
+        
         
         /*
          * 
@@ -61,7 +62,6 @@ public class Guitar {
          * 
          */
         
-        Fretting fretting = new Fretting();
         
         // chord.getName() will give the note name of the lowest note, then just find that
         System.out.println("\n\nHopefully the set of keys?");
@@ -88,7 +88,38 @@ public class Guitar {
 			        // The question is why I thought it would before I tested it?
         
         // fretting.put(key, value)
+			        
+		int wire = 0;
+		int fret = 0;
+		String noteName = chord.getName();
+		while (wire <= 5){
+			if (fret < 4) {
+				
+			}
+		}
         
+		// Initializing fret position bounds
+		int lowerBound = 0;
+		int upperBound = 3;
+		
+		Set<Set<Map<Wire, Integer>>> frettings = new HashSet<>();
+		Collection<Map<Wire, Integer>> noteNameCollection = chordNoteNameLocations.values();
+		
+		for (Map<Wire, Integer> m : noteNameCollection) {
+			Set<Map<Wire, Integer>> fretting = new HashSet<>();
+			while (wire <= 5) {
+				for (Integer f : m.values()) {
+					if ( f >= lowerBound && f <= upperBound) {						
+						fretting.add(m);
+					}
+				}
+				wire++;
+			}
+			frettings.add(fretting);
+		}
+				// Hmm, this seems to break things:
+				// System.out.println("Frettings size: " + frettings.size());
+		
         /*
          * OK, it looks, through debugging, like generating the elements of the chord isn't working, exactly. 
          * Or it is, but in a useless way.
